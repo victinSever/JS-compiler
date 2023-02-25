@@ -41,29 +41,28 @@ import {
 } from "@element-plus/icons-vue";
 
 import bus from "@/utils";
-import { useStore } from "vuex";
 
 const displayBtnsList = [
   {
     type: "file",
     children: [
-      { label: "openFile", icon: FolderOpened, order: "openFile" },
-      { label: "compiler", icon: Collection, order: "compiler" },
+      { label: "打开文件", icon: FolderOpened, order: "getCode" },
+      { label: "保存", icon: Collection, order: "saveCode" },
     ],
   },
   {
     type: "check",
     children: [
-      { label: "Scissor", icon: Scissor },
-      { label: "DocumentCopy", icon: DocumentCopy },
+      { label: "剪切", icon: Scissor },
+      { label: "复制", icon: DocumentCopy },
     ],
   },
   {
     type: "other",
     children: [
-      { label: "theme", icon: Sunrise, order: 'changeTheme' },
-      { label: "printer", icon: Printer },
-      { label: "star", icon: Star },
+      { label: "切换主题", icon: Sunrise, order: "changeTheme" },
+      { label: "编译", icon: Printer, order: 'compiler' },
+      { label: "收藏", icon: Star },
     ],
   },
 ];
@@ -71,23 +70,20 @@ const displayBtnsList = [
 export default {
   name: "display-btn-compontent",
   setup() {
-    const store = useStore();
     return {
       displayBtnsList,
-      store,
     };
   },
 
   methods: {
-    handlerGetCode() {},
-
     handleChooseOptions(order) {
-      switch(order) {
-        case 'compiler': bus.emit("handleOption", order); break;
-        case 'openFile': bus.emit("handleOption", order); break;
-        case 'changeTheme': bus.emit("handleCodeOption", order); break;
-        default: this.$message.error('命令出错了'); break;;
-      }
+      const enum1 = ['compiler']
+      const enum2 = ['changeTheme', 'saveCode', 'getCode']
+      if(enum1.findIndex(item => item === order) !== -1) {
+        bus.emit("handleOption", order);
+      } else if(enum2.findIndex(item => item === order) !== -1) {
+        bus.emit("handleCodeOption", order);
+      } else this.$message.info('暂无实现！！')
     },
   },
 };

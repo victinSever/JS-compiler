@@ -6,6 +6,7 @@
           v-model="code"
           placeholder="Code goes here..."
           :style="{ height: '100%' }"
+          :options="{fontFamily: '黑体', fontSize: '20px'}"
           :autofocus="true"
           :indent-with-tab="true"
           :tab-size="2"
@@ -19,12 +20,13 @@
 </template>
 
 <script>
-import { throttle } from "@/utils/tools";
 import bus from "@/utils";
 import { ref, shallowRef, defineComponent } from "vue";
 import { Codemirror } from "vue-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { oneDark } from "@codemirror/theme-one-dark";
+
+import { getCode, saveCode } from "@/utils/request";
 
 export default defineComponent({
   name: "code-compontent",
@@ -32,7 +34,7 @@ export default defineComponent({
     Codemirror,
   },
   setup() {
-    const code = ref(`console.log('Hello, world!')`);
+    const code = ref(``);
     const extensions = [javascript()];
 
     // Codemirror EditorView instance ref
@@ -70,20 +72,48 @@ export default defineComponent({
       switch (order) {
         // 改变主题色
         case "changeTheme":
-          {
-            const index = this.extensions.findIndex(
-              (extend) => extend == oneDark
-            );
-            index === -1
-              ? this.extensions.push(oneDark)
-              : this.extensions.pop();
-            console.log(this.extensions);
-          }
+          this.changeTheme();
+          break;
+          // 获取上次保存的文件内容
+        case "getCode":
+          this.httpGetCode();
+          break;
+          // 保存文件
+        case "saveCode":
+          this.httpSaveCode(this.code);
           break;
       }
     });
   },
   methods: {
+    changeTheme() {
+      const index = this.extensions.findIndex((extend) => extend == oneDark);
+      index === -1 ? this.extensions.push(oneDark) : this.extensions.pop();
+    },
+
+    async httpSaveCode(code) {
+      try {
+        const res = await saveCode(code);
+        if (res.data.code === 200) {
+          this.$message.success(res.data.msg);
+        }
+      } catch (e) {
+        this.$message.error(e);
+      }
+    },
+
+    async httpGetCode() {
+      try {
+        const res = await getCode();
+        if (res.data.code === 200) {
+          this.code = res.data.data;
+          this.$message.success(res.data.msg);
+        }
+      } catch (e) {
+        this.$message.error(e);
+      }
+    },
+
     HandlerCodeChange() {
       // 传入全局存储
       this.$store.commit("HandleUpdateCode", this.code);

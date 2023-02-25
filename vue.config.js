@@ -26,9 +26,19 @@ module.exports = {
   },
 
   ///启动source-map
-  configureWebpack: config => {
-    if (debug) { // 开发环境配置
-        config.devtool = 'source-map'
+  configureWebpack: {
+    devtool: debug ? 'source-map' : 'false',
+    module: {
+      rules: [
+        // 配置读取 *.md 文件的规则
+        {
+          test: /\.md$/,
+          use: [
+            { loader: "html-loader" },
+            { loader: "markdown-loader", options: {} }
+          ]
+        }
+      ]
     }
   },
 
