@@ -2,8 +2,8 @@
 本项目是Javascript编译器网页版，包含了前端和后端的实现。
 
 ## 技术栈简介
-前端技术栈：Vue3 + webpack + vue-router + vuex + element-plus + vue-codemirror
-后端技术栈：node.js 16 + express + mongodb
+- 前端技术栈：Vue3 + webpack + vue-router + vuex + element-plus + vue-codemirror
+- 后端技术栈：node.js 16 + express + mongodb
 
 ## 功能实现
 - JS语法分析
