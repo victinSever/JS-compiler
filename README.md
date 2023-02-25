@@ -19,7 +19,9 @@
 文档正在完善中···
 
 ## 部署地址
-暂无
+github地址：https://github.com/victinSever/JS-compiler
+前端业务：master分支
+后端业务：server分支
 
 ## 相关文档
 文档正在完善中···
