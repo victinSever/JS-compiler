@@ -13,7 +13,7 @@ module.exports = {
 
   productionSourceMap: false,
 
-  // publicPath: './',
+  publicPath: './',
 
   // outputDir: 'package',
 
@@ -27,7 +27,7 @@ module.exports = {
 
   ///启动source-map
   configureWebpack: {
-    devtool: debug ? 'source-map' : 'false',
+    // devtool: debug ? 'source-map' : 'false',
     module: {
       rules: [
         // 配置读取 *.md 文件的规则
