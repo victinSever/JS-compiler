@@ -40,7 +40,7 @@ import {
   FolderOpened,
 } from "@element-plus/icons-vue";
 
-import bus from "@/utils";
+import bus from "@/utils/bus";
 
 const displayBtnsList = [
   {
@@ -76,6 +76,7 @@ export default {
   },
 
   methods: {
+    // 根据业务不同，使用bus触发事件
     handleChooseOptions(order) {
       const enum1 = ['compiler']
       const enum2 = ['changeTheme', 'saveCode', 'getCode']

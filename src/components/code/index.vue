@@ -6,7 +6,7 @@
           v-model="code"
           placeholder="Code goes here..."
           :style="{ height: '100%' }"
-          :options="{fontFamily: '黑体', fontSize: '20px'}"
+          :options="{ fontFamily: '黑体', fontSize: '20px' }"
           :autofocus="true"
           :indent-with-tab="true"
           :tab-size="2"
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import bus from "@/utils";
+import bus from "@/utils/bus";
 import { ref, shallowRef, defineComponent } from "vue";
 import { Codemirror } from "vue-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
@@ -34,7 +34,7 @@ export default defineComponent({
     Codemirror,
   },
   setup() {
-    const code = ref(``);
+    // const code = ref(``);
     const extensions = [javascript()];
 
     // Codemirror EditorView instance ref
@@ -59,7 +59,7 @@ export default defineComponent({
     };
 
     return {
-      code,
+      code: ref(``),
       extensions,
       handleReady,
       log: console.log,
@@ -67,6 +67,8 @@ export default defineComponent({
     };
   },
   mounted() {
+    this.httpGetCode()
+    
     //挂载一个操作指令总线，操作指令
     bus.on("handleCodeOption", (order) => {
       switch (order) {
@@ -74,11 +76,11 @@ export default defineComponent({
         case "changeTheme":
           this.changeTheme();
           break;
-          // 获取上次保存的文件内容
+        // 获取上次保存的文件内容
         case "getCode":
           this.httpGetCode();
           break;
-          // 保存文件
+        // 保存文件
         case "saveCode":
           this.httpSaveCode(this.code);
           break;
@@ -98,7 +100,7 @@ export default defineComponent({
           this.$message.success(res.data.msg);
         }
       } catch (e) {
-        this.$message.error(e);
+        this.$message.error("文件保存失败！原因：" + e);
       }
     },
 
@@ -107,10 +109,11 @@ export default defineComponent({
         const res = await getCode();
         if (res.data.code === 200) {
           this.code = res.data.data;
+          this.HandlerCodeChange();
           this.$message.success(res.data.msg);
         }
       } catch (e) {
-        this.$message.error(e);
+        this.$message.error("文件打开失败！原因：" + e);
       }
     },
 
@@ -125,10 +128,10 @@ export default defineComponent({
 <style scoped lang='scss'>
 .ca-code {
   width: 100%;
-  border-right: 2px solid var(--border-bold);
+  // border-right: 2px solid var(--border-bold);
+  box-shadow: 0.5rem 0 0.99rem -0.55rem var(--border-bold);
   height: calc(100vh - 6rem);
-  overflow: scroll;
-  position: relative;
+  overflow: hidden;
 
   .ca-code-inner_box {
     height: calc(100%);

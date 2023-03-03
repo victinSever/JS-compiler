@@ -78,12 +78,12 @@ export default {
 
   .ca-left-top-box {
     width: 100%;
-    height: 50vh;
+    height: 60vh;
   }
 
   .ca-right-bottom-box {
     width: 100%;
-    height: calc(50vh - 4px - 6rem);
+    height: calc(40vh - 4px - 6rem);
   }
 }
 </style>

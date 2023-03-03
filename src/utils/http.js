@@ -22,12 +22,23 @@
 
 // export default createHttp
 
+import nprogress from 'nprogress'
+import axios from 'axios'
+import { baseUrl, port } from './config'
 
-// import axios from 'axios'
-// export default async ({
+//基础链接地址
+axios.defaults.baseURL = `${baseUrl}:${port}`
 
-// }) => {
-//     return await axios({
-//         type: 
-//     })
-// }
+//前置
+axios.interceptors.request.use(request => {
+    nprogress.start()
+    return request
+})
+
+//后置
+axios.interceptors.response.use(response => {
+    nprogress.done()
+    return response
+})
+
+export default axios

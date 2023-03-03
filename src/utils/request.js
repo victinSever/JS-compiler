@@ -1,17 +1,20 @@
 
-import axios from 'axios'
-const baseUrl = 'http://localhost:3001'
+import http from './http'
 
-
-async function saveCode(code) {
-    return await axios.get(`${baseUrl}/saveCode?code=${code}`)
+/**
+ * 
+ * @returns 
+ */
+export const saveCode = async (code) => {
+    return await http.post(`/saveCode`, {
+        params: { code }
+    })
 }
 
-async function getCode() {
-    return await axios.get(`${baseUrl}/getCode`)
-}
-
-export {
-    getCode,
-    saveCode
+/**
+ * 
+ * @returns 
+ */
+export const getCode = async () => {
+    return await http.get(`/getCode`)
 }

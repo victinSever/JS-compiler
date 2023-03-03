@@ -91,11 +91,11 @@ export default {
   }
 
   .ca-left-box {
-    width: 50vw;
+    width: 60vw;
   }
 
   .ca-right-box {
-    width: calc(50vw - 4px);
+    width: calc(40vw - 4px);
   }
 }
 </style>
