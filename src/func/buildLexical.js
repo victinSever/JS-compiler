@@ -42,17 +42,21 @@ const TYPE_IDENTIFIER = 'identifier' //标识符
 const TYPE_OPERATOR = 'operator' //操作符
 const TYPE_DELIMITER = 'delimiter' //界符
 const TYPE_STRING = 'string' //字符串
-const TYPE_OTHER = 'other' //其他
+const TYPE_NUMBER = 'number' //数值
 
 
 /************************************************
  * 正则匹配
  */
 
-//匹配字母或者下划线
+//匹配字母或者下划线或者数字
+const regexNum = /\d/
 const regexAlpha = /[a-z]|[A-Z]/
 const regexAlphaAndLine = /[a-z]|[A-Z]|_/
-const regexAlphaAndLineAndNumber = /[a-z]|[A-Z]|_|[0-9]/
+const regexAlphaAndLineAndNum = /[a-z]|[A-Z]|_|[0-9]/
+//匹配任意八进制，十六进制，十进制或者科学计数法的数字
+const regexNumber = /[-+]?(?:0[xX][\da-fA-F]+|\d+(?:\.\d*)?(?:[eE][+-]?\d+)?|0[0-7]*)/
+
 
 // 匹配单行注释和多行注释
 const regexSingleExplain = /\/\/.*$/ //单行注释
@@ -87,11 +91,16 @@ function next() {
     }
 }
 
+//跳过n次读取
+function passN(n) {
+    while (n--) next()
+}
+
 //分析器 - 根据传入的第一个标识符获取完整标识符
 function getKeyword(ch) {
     //不断读取，直到读取空格或者换行符分隔
     let word = ch
-    while (regexAlphaAndLineAndNumber.test(content[cur + 1])) {
+    while (regexAlphaAndLineAndNum.test(content[cur + 1])) {
         next()
         word += content[cur]
     }
@@ -134,8 +143,8 @@ function getMutiExplain(cur) {
 }
 
 //匹配字符串
-function getString(cur) { 
-    let leftStr = content.substring(cur, contentLen) 
+function getString(cur) {
+    let leftStr = content.substring(cur, contentLen)
     let match = leftStr.match(regexString)
     if (!match) throw Error('字符串匹配出错！')
     let i = 0
@@ -145,12 +154,25 @@ function getString(cur) {
     return match[0]
 }
 
+//匹配数字
+function getNumber(cur) {
+    let leftStr = content.substring(cur, contentLen)
+    let match = leftStr.match(regexNumber)
+    if (!match) throw Error('数值匹配出错！')
+    let i = 0
+    while (i++ < match[0].length - 1) {
+        next()
+    }
+    return match[0]
+}
+
+//添加token对象
 function addToken(type, value) {
-    tokens.push({ 
-        type, 
-        value, 
-        col: col - value.length, 
-        row 
+    tokens.push({
+        type,
+        value,
+        col: col - value.length,
+        row
     })
 }
 
@@ -181,7 +203,7 @@ function buildLexer(code) {
 
         // 匹配到操作符
         else if (isOperator(char)) {
-            //匹配到 /
+            //匹配到 /，注释全部跳过
             if (cur + 1 < contentLen && char === '/') {
                 //匹配到单行注释
                 if (content[cur + 1] === '/') {
@@ -200,20 +222,28 @@ function buildLexer(code) {
             }
         }
 
+        //匹配到数字
+        else if (/[-+]|\d/.test(char)) {
+            word = getNumber(cur)
+            type  = TYPE_NUMBER
+            addToken(type, word)
+        }
+
         // 匹配到界符
         else if (isDelimiter(char)) {
             // 匹配字符串
-            if(/['"`]/.test(char)) {
-                word = getString(cur)               
+            if (/['"`]/.test(char)) {
+                word = getString(cur)
                 type = TYPE_STRING
             }
+            // 匹配其他界符
             else {
                 word = char
-                type = TYPE_DELIMITER              
+                type = TYPE_DELIMITER
             }
             addToken(type, word)
-        }     
-    
+        }
+
         //获取下一个字符        
         next()
 
