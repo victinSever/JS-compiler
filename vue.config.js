@@ -13,11 +13,11 @@ module.exports = {
 
   productionSourceMap: false,
 
-  publicPath: './',
+  // publicPath: './',
 
-  outputDir: 'package',
+  // outputDir: 'package',
 
-  assetsDir: 'assets',
+  // assetsDir: 'assets',
 
   devServer: {
     port: 3000,
