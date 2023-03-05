@@ -23,7 +23,7 @@
             class="ca-display-sub-item"
             v-for="(child, p) in item.children"
             :key="p"
-             @click="handleOpration(child)"
+            @click="handleOpration(child)"
           >
             <el-button class="m-2 child" link>{{
               child.label + (child.letter ? "(" + child.letter + ")" : "")
@@ -39,15 +39,27 @@
       }}</el-button>
     </div>
   </el-row>
+
+
+  <Mkdir :changeDrawer="drawer"/>
 </template>
 
 <script>
 import { Check } from "@element-plus/icons-vue";
-import { reactive } from 'vue'
-import bus from '@/utils/bus';
+import { reactive, ref } from "vue";
+import bus from "@/utils/bus";
+import Mkdir from "@/components/mkdir";
 
 const displayList = [
-  { label: "文件", letter: "F" },
+  {
+    label: "文件",
+    letter: "F",
+    children: [
+      { label: "新建文件", letter: "N" },
+      { label: "打开最近的文件", letter: "R" },
+      { label: "打开文件夹", letter: "K" },
+    ],
+  },
   { label: "编辑", letter: "E" },
   { label: "词法分析", letter: "W" },
   { label: "语法分析", letter: "P" },
@@ -57,8 +69,8 @@ const displayList = [
     label: "视图",
     letter: "V",
     children: [
-      { label: "输出窗口", order: 'console', checked: true },
-      { label: "报错窗口", order: 'error', checked: true },
+      { label: "输出窗口", order: "console", checked: true },
+      { label: "报错窗口", order: "error", checked: true },
     ],
   },
   {
@@ -73,40 +85,53 @@ const displayList = [
 
 export default {
   name: "display-compontent",
+  components: { Mkdir },
   setup() {
     return {
       displayList: reactive(displayList),
       Check,
+      drawer: ref(false),
     };
   },
   methods: {
     handleOpration(obj) {
-      console.log(obj);
       if (obj.letter) {
         switch (obj.letter) {
           case "A":
             this.$router.push("/document");
             return;
+          case "R":
+            bus.emit("handleCodeOption", "getCode");
+            return;
+          case "K":
+            this.drawer = !this.drawer;
+            return;
+          case "W":
+            bus.emit("handleOutput", "lexical");
+            return;
+          case "P":
+            bus.emit("handleOutput", "parse");
+            return;
           default:
             this.$message.warning("功能未完善！");
         }
-      } else {
+      } else if (obj.order) {
         // 触发主体视图更新变化
-        bus.emit('handlerChangeView', {
+        bus.emit("handlerChangeView", {
           type: obj.order,
-          checked: !obj.checked
-        })
+          checked: !obj.checked,
+        });
 
         // 更改按钮的选择状态
         this.displayList.forEach((item, i) => {
           if (item.children) {
             let index = item.children.findIndex((p) => p.label === obj.label);
-            if (index !== -1) {             
+            if (index !== -1) {
               this.displayList[i].children[index].checked =
                 !this.displayList[i].children[index].checked;
             }
           }
-        });       
+        });
       }
     },
     handlerChangeViewState() {},

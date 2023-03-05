@@ -18,3 +18,23 @@ export const saveCode = async (code) => {
 export const getCode = async () => {
     return await http.get(`/getCode`)
 }
+
+/**
+ * 
+ * @returns 
+ */
+export const getLexical = async (content) => {
+    return await http.post(`/getLexical`, {
+        params: { content }
+    })
+}
+
+/**
+ * 
+ * @returns 
+ */
+export const getSyntax = async (tokens) => {
+    return await http.post(`/getSyntax`, {
+        params: { tokens }
+    })
+}

@@ -10,21 +10,7 @@
     </div>
     <div class="ca-error-inner_box">
       {{error}}
-      <p>123</p>
-      <p>123</p>
-      <p>123</p>
-      <p>123</p>
-      <p>123</p>
-      <p>123</p>
-      <p>123</p>
-      <p>123</p>
-      <p>123</p>
-      <p>123</p>
-      <p>123</p>
-      <p>123</p>
-      <p>123</p>
-      <p>123</p>
-      <p>123</p>
+      <p>这是报错的文本测试</p>
     </div>
   </div>
 </template>
@@ -76,6 +62,8 @@ export default {
     overflow: scroll;
     padding: 0.5rem;
     height: calc(100% - 3rem);
+    color: var(--border-bold);
+    // color: var(--theme-danger);
   }
 }
 </style>

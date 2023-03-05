@@ -33,7 +33,7 @@
 import {
   Collection,
   DocumentCopy,
-  Scissor,
+  Delete,
   Star,
   Printer,
   Sunrise,
@@ -53,15 +53,15 @@ const displayBtnsList = [
   {
     type: "check",
     children: [
-      { label: "剪切", icon: Scissor },
-      { label: "复制", icon: DocumentCopy },
+      { label: "清空", icon: Delete, order: "delete" },
+      { label: "全部复制", icon: DocumentCopy, order: "copy" },
     ],
   },
   {
     type: "other",
     children: [
       { label: "切换主题", icon: Sunrise, order: "changeTheme" },
-      { label: "编译", icon: Printer, order: 'compiler' },
+      { label: "编译", icon: Printer, order: "compiler" },
       { label: "收藏", icon: Star },
     ],
   },
@@ -78,13 +78,23 @@ export default {
   methods: {
     // 根据业务不同，使用bus触发事件
     handleChooseOptions(order) {
-      const enum1 = ['compiler']
-      const enum2 = ['changeTheme', 'saveCode', 'getCode']
-      if(enum1.findIndex(item => item === order) !== -1) {
-        bus.emit("handleOption", order);
-      } else if(enum2.findIndex(item => item === order) !== -1) {
+      // console区的操作事件
+      const consoleOpration = [];
+      // code区的操作事件
+      const codeOpration = [
+        "changeTheme",
+        "saveCode",
+        "getCode",
+        "delete",
+        "copy",
+      ];
+
+      // 判断操作
+      if (consoleOpration.findIndex((item) => item === order) !== -1) {
+        bus.emit("handleOutput", order);
+      } else if (codeOpration.findIndex((item) => item === order) !== -1) {
         bus.emit("handleCodeOption", order);
-      } else this.$message.info('暂无实现！！')
+      } else this.$message.info("暂无实现！！");
     },
   },
 };

@@ -21,7 +21,7 @@
 
 <script>
 import bus from "@/utils/bus";
-import { ref, shallowRef, defineComponent, reactive } from "vue";
+import { ref, shallowRef, defineComponent, } from "vue";
 import { Codemirror } from "vue-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { oneDark } from "@codemirror/theme-one-dark";
@@ -68,9 +68,10 @@ export default defineComponent({
   },
   mounted() {
     // this.httpGetCode()
-    
+
     //挂载一个操作指令总线，操作指令
     bus.on("handleCodeOption", (order) => {
+      console.log(order);
       switch (order) {
         // 改变主题色
         case "changeTheme":
@@ -82,20 +83,54 @@ export default defineComponent({
           break;
         // 保存文件
         case "saveCode":
-          this.httpSaveCode(this.code);
+          this.httpSaveCode();
+          break;
+        // 清空code
+        case "delete":
+          this.deleteCode();
+          break;
+        // 复制code
+        case "copy":
+          this.copyCode();
           break;
       }
     });
   },
   methods: {
+    deleteCode() {
+      this.code = "";
+      this.HandlerCodeChange();
+      this.$message.success('文本已清空！');
+    },
+
+    copyCode() {
+      var inputElement = document.createElement("input");
+      // 将 input 元素的样式设置得尽可能小，隐藏元素
+      inputElement.style.position = "absolute";
+      inputElement.style.left = "-9999px";
+      inputElement.style.top = "-9999px";
+
+      document.body.appendChild(inputElement);
+      inputElement.value = this.code;
+
+      // 选中文本
+      inputElement.select();
+
+      // 复制文本到剪贴板
+      document.execCommand("copy");
+
+      document.body.removeChild(inputElement);
+      this.$message.success('复制成功！');
+    },
+
     changeTheme() {
       const index = this.extensions.findIndex((extend) => extend == oneDark);
       index === -1 ? this.extensions.push(oneDark) : this.extensions.pop();
     },
 
-    async httpSaveCode(code) {
+    async httpSaveCode() {
       try {
-        const res = await saveCode(code);
+        const res = await saveCode(this.code);
         if (res.data.code === 200) {
           this.$message.success(res.data.msg);
         }
@@ -109,7 +144,7 @@ export default defineComponent({
         const res = await getCode();
         if (res.data.code === 200) {
           this.code = res.data.data;
-          this.HandlerCodeChange();
+          this.$store.commit("UpdateCode", this.code)
           this.$message.success(res.data.msg);
         }
       } catch (e) {
@@ -117,10 +152,6 @@ export default defineComponent({
       }
     },
 
-    HandlerCodeChange() {
-      // 传入全局存储
-      this.$store.commit("HandleUpdateCode", this.code);
-    },
   },
 });
 </script>

@@ -33,12 +33,15 @@ axios.defaults.baseURL = `${baseUrl}:${port}`
 axios.interceptors.request.use(request => {
     nprogress.start()
     return request
-})
+}, err => Promise.reject(err))
 
 //后置
 axios.interceptors.response.use(response => {
     nprogress.done()
     return response
+}, err => {
+    nprogress.done()
+    return Promise.reject(err)
 })
 
 export default axios
