@@ -1,0 +1,18 @@
+copyCode() {
+  var inputElement = document.createElement("input");
+  // 将 input 元素的样式设置得尽可能小，隐藏元素
+  inputElement.style.position = "absolute";
+  inputElement.style.left = "-9999px";
+  inputElement.style.top = "-9999px";
+
+  document.body.appendChild(inputElement);
+  inputElement.value = this.code;
+
+  // 选中文本
+  inputElement.select();
+
+  // 复制文本到剪贴板
+  document.execCommand("copy");
+
+  document.body.removeChild(inputElement);
+}
