@@ -10,6 +10,21 @@
     </div>
     <div class="ca-error-inner_box">
       {{error}}
+      <p>123</p>
+      <p>123</p>
+      <p>123</p>
+      <p>123</p>
+      <p>123</p>
+      <p>123</p>
+      <p>123</p>
+      <p>123</p>
+      <p>123</p>
+      <p>123</p>
+      <p>123</p>
+      <p>123</p>
+      <p>123</p>
+      <p>123</p>
+      <p>123</p>
     </div>
   </div>
 </template>
@@ -41,17 +56,8 @@ export default {
 .ca-error {
   width: 100%;
   height: 100%;
-  overflow: scroll;
 
-  .ca-error-btns {
-    // height: 1.5rem;
-    // padding: 0 0.5rem;
-    // display: flex;
-    // justify-content: space-between;
-    // align-items: center;
-    // box-shadow: 0 0.2rem 0.3rem -0.25rem var(--border-bold);
-    // margin-bottom: 0.5rem;
-    
+  .ca-error-btns {   
       height: 2rem;
       line-height: 2rem;
       padding-left: 0.5rem;
@@ -64,16 +70,12 @@ export default {
       cursor: pointer;
       margin: 0 0.5rem;
     }
-
-    // .error-text {
-    //   font-family: 'kaiti';
-    //   color: var(--theme-danger);
-    // }
   }
 
   .ca-error-inner_box {
+    overflow: scroll;
     padding: 0.5rem;
-    height: 100%;
+    height: calc(100% - 3rem);
   }
 }
 </style>

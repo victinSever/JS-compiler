@@ -5,6 +5,7 @@
       <div
         class="ca-left-box"
         ref="leftBox"
+        :style="'width: ' + (!openRight ? '100%' : '60%')"
         @mouseup="endResize"
         @mousemove="resize"
       >
@@ -15,12 +16,14 @@
         @mousedown="startResize"
         @mouseup="endResize"
         @mousemove="resize"
+        v-if="openRight"
       ></div>
       <div
         class="ca-right-box"
         ref="rightBox"
         @mouseup="endResize"
         @mousemove="resize"
+        v-if="openRight"
       >
         <Output/>
       </div>
@@ -33,6 +36,7 @@
 import Header from "@/components/header";
 import Code from "@/components/code";
 import Output from "@/components/output";
+import bus from '@/utils/bus';
 
 export default {
   name: "App",
@@ -41,7 +45,12 @@ export default {
       isResizing: false,
       startX: 0,
       startWidth: 0,
+      openRight: true
     };
+  },
+  mounted() {
+    //挂载视图改变监听
+    bus.on('handlerChangeViewInContent', (res) => this.openRight = res)
   },
   methods: {
     startResize(e) {
@@ -82,7 +91,6 @@ export default {
 
 .ca-container {
   display: flex;
-  width: 100%;
 
   .resize-bar {
     width: 4px;
@@ -91,11 +99,11 @@ export default {
   }
 
   .ca-left-box {
-    width: 60vw;
+    width: 60%;
   }
 
   .ca-right-box {
-    width: calc(40vw - 4px);
+    width: calc(40% - 4px);
   }
 }
 </style>

@@ -4,8 +4,10 @@
       <div
         class="ca-left-top-box"
         ref="topBox"
+        :style="'height: ' + (!errorOpen ? '100%' : '60%')"
         @mouseup="endResize"
         @mousemove="resize"
+        v-if="consoleOpen"
       >
         <Result />
       </div>
@@ -14,12 +16,15 @@
         @mousedown="startResize"
         @mouseup="endResize"
         @mousemove="resize"
+        v-if="consoleOpen && errorOpen"
       ></div>
       <div
         class="ca-right-bottom-box"
+        :style="'height: ' + (!consoleOpen ? '100%' : 'calc(40% - 4px)')"
         ref="bottomBox"
         @mouseup="endResize"
         @mousemove="resize"
+        v-if="errorOpen"
       >
         <Error />
       </div>
@@ -28,6 +33,7 @@
 </template>
 
 <script>
+import bus from '@/utils/bus';
 import Error from "./error";
 import Result from "./result";
 export default {
@@ -38,9 +44,29 @@ export default {
       isResizing: false,
       startY: 0,
       startHeight: 0,
+      consoleOpen: true,
+      errorOpen: true
     };
   },
+  mounted() {  
+    // 挂载更改视图事件
+    bus.on('handlerChangeView', this.changeView)
+  },
   methods: {
+    // 更改视图事件
+    changeView(obj) {
+      if(!this.errorOpen && !this.consoleOpen) {
+        bus.emit('handlerChangeViewInContent', true)
+      }
+      switch(obj.type) {
+        case 'console': this.consoleOpen = obj.checked;break;
+        case 'error': this.errorOpen = obj.checked;break;
+      }
+      if(!this.errorOpen && !this.consoleOpen) {
+        bus.emit('handlerChangeViewInContent', false)
+      }
+    },
+
     startResize(e) {
       this.isResizing = true;
       this.startY = e.clientY;
@@ -67,7 +93,11 @@ export default {
 .ca-output {
   width: 100%;
   background-color: var(--bgColor1);
-  height: 100%;
+  height: calc(100vh - 6rem - 3px);
+
+  .ca-container-output {
+    height: 100%;
+  }
 
   .resize-bar-inline {
     width: 100%;
@@ -78,12 +108,12 @@ export default {
 
   .ca-left-top-box {
     width: 100%;
-    height: 60vh;
+    height: 60%;
   }
 
   .ca-right-bottom-box {
     width: 100%;
-    height: calc(40vh - 4px - 6rem);
+    height: calc(40% - 4px);
   }
 }
 </style>

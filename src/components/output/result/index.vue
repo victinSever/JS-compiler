@@ -7,12 +7,13 @@
         </div>
         <div class="right-title"></div>
       </div>
+
       <div class="result-content">
         <el-card class="box-card" v-if="result">
           <template #header>
             <div class="card-header">
               <span>{{ order ? logDir : "" }}</span>
-              <el-button class="button" text>Operation button</el-button>
+              <el-button class="button" text>输出流</el-button>
             </div>
           </template>
           <div v-for="(item, index) in result" :key="index" class="text item">
@@ -87,7 +88,6 @@ export default {
 .ca-result {
   width: 100%;
   height: 100%;
-  overflow: scroll;
   border-bottom: 2px solid var(--border-bold);
   position: relative;
 
@@ -104,6 +104,11 @@ export default {
       color: var(--border-bold);
       display: flex;
       justify-content: space-between;
+    }
+
+    .result-content {
+      height: calc(100% - 3rem);
+      overflow: scroll;
     }
   }
 }

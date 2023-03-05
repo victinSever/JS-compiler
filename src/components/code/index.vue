@@ -21,7 +21,7 @@
 
 <script>
 import bus from "@/utils/bus";
-import { ref, shallowRef, defineComponent } from "vue";
+import { ref, shallowRef, defineComponent, reactive } from "vue";
 import { Codemirror } from "vue-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { oneDark } from "@codemirror/theme-one-dark";
@@ -67,7 +67,7 @@ export default defineComponent({
     };
   },
   mounted() {
-    this.httpGetCode()
+    // this.httpGetCode()
     
     //挂载一个操作指令总线，操作指令
     bus.on("handleCodeOption", (order) => {
