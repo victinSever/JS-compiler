@@ -5,36 +5,37 @@
         <span class="error-text">ERROR</span>
       </div>
       <div class="right-btns">
-        <el-icon><Close /></el-icon>
+        <el-icon @click="handleClose"><Close /></el-icon>
       </div>
     </div>
     <div class="ca-error-inner_box">
-      {{error}}
-      <p>这是报错的文本测试</p>
+      <div class="error-item" v-for="(item,i) in error" :key="i">
+        <span>{{item.row}}</span>
+        <span>{{item.col}}</span>
+        <span>{{item.value}}</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref } from "vue";
-import bus from "@/utils/bus";
 import {
   Close
 } from "@element-plus/icons-vue";
 
 export default {
   name: "error-compontent",
+  props: ['error'],
   setup() {
     return {
-      error: ref(``),
       Close
     };
   },
-  mounted() {
-    bus.on("handlePrintError", (error) => {
-      this.error = error;
-    });
-  },
+  methods: {
+    handleClose() {
+      this.$emit('handleClose', true)
+    }
+  }
 };
 </script>
 

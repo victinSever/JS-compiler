@@ -58,63 +58,10 @@
 </template>
 
 <script>
-import bus from "@/utils/bus";
-import { getSyntax, getLexical } from "@/utils/request";
 
 export default {
   name: "result-compontent",
-  data() {
-    return {
-      opration: "",
-      logText: "",
-      tokens: [],
-      ast: "",
-    };
-  },
-  mounted() {
-    // 监听操作
-    bus.on("handleOutput", (p) => {
-      this.handleCheckRun(p);
-      this.opration = p;
-    });
-  },
-  methods: {
-    handleCheckRun(val) {
-      switch (val) {
-        case "lexical":
-          this.logText = "词法分解析Tokens";
-          this.httpGetTokens();
-          break;
-        case "parse":
-          this.logText = "语法分析树AST";
-          this.httpGetAST();
-          break;
-      }
-    },
-    // 词法分析
-    async httpGetTokens() {
-      const content = this.$store.getters.code;
-      if (typeof content === "string" && content.trim() === "")
-        return this.$message.warning("代码为空！");
-      try {
-        const data = await getLexical(content);
-        this.tokens = data.data.data;
-      } catch (e) {
-        this.$message.error(e);
-      }
-    },
-    // 语法分析
-    async httpGetAST() {
-      if ( this.tokens.length === 0)
-        return this.$message.warning("请先进行词法分析！");
-      try {
-        const data = await getLexical(this.tokens);
-        this.ast = data.data.data;
-      } catch (e) {
-        this.$message.error(e);
-      }
-    },
-  },
+  props: ['logText', 'opration', 'tokens', 'ast'],
 };
 </script>
 

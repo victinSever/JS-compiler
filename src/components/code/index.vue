@@ -67,7 +67,6 @@ export default defineComponent({
     };
   },
   mounted() {
-    // this.httpGetCode()
 
     //挂载一个操作指令总线，操作指令
     bus.on("handleCodeOption", (order) => {
@@ -99,7 +98,7 @@ export default defineComponent({
   methods: {
     deleteCode() {
       this.code = "";
-      this.HandlerCodeChange();
+      this.HandlerCodeChange(this.code)
       this.$message.success('文本已清空！');
     },
 
@@ -144,13 +143,18 @@ export default defineComponent({
         const res = await getCode();
         if (res.data.code === 200) {
           this.code = res.data.data;
-          this.$store.commit("UpdateCode", this.code)
+          this.HandlerCodeChange(this.code)
           this.$message.success(res.data.msg);
         }
       } catch (e) {
         this.$message.error("文件打开失败！原因：" + e);
       }
     },
+
+    HandlerCodeChange(val) {
+      this.code = val
+      this.$store.commit("UpdateCode", val)
+    }
 
   },
 });

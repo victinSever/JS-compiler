@@ -9,7 +9,12 @@
         @mousemove="resize"
         v-if="consoleOpen"
       >
-        <Result />
+        <Result 
+        :opration="opration"
+        :tokens="tokens"
+        :ast="ast"
+        :logText="logText"
+        />
       </div>
       <div
         class="resize-bar-inline"
@@ -26,16 +31,19 @@
         @mousemove="resize"
         v-if="errorOpen"
       >
-        <Error />
+        <Error :error="error" @handleClose="handleClose"/>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import bus from '@/utils/bus';
+import bus from "@/utils/bus";
 import Error from "./error";
 import Result from "./result";
+
+import { getSyntax, getLexical } from "@/utils/request";
+
 export default {
   name: "output-compontent",
   components: { Error, Result },
@@ -45,14 +53,67 @@ export default {
       startY: 0,
       startHeight: 0,
       consoleOpen: true,
-      errorOpen: true
+      errorOpen: true,
+      opration: "",
+      logText: "",
+      tokens: [],
+      ast: "",
+      error: []
     };
   },
   mounted() {  
     // 挂载更改视图事件
     bus.on('handlerChangeView', this.changeView)
+
+    // 监听操作
+    bus.on("handleOutput", (p) => {
+      this.handleCheckRun(p);
+      this.opration = p;
+    });
   },
   methods: {
+    handleClose() {
+      this.errorOpen = false
+    },
+
+    handleCheckRun(val) {
+      switch (val) {
+        case "lexical":
+          this.logText = "词法分解析Tokens";
+          this.httpGetTokens();
+          break;
+        case "parse":
+          this.logText = "语法分析树AST";
+          this.httpGetAST();
+          break;
+      }
+    },
+    // 词法分析
+    async httpGetTokens() {
+      const content = this.$store.getters.code;
+      if (typeof content === "string" && content.trim() === "")
+        return this.$message.warning("代码为空！");
+      try {
+        const data = await getLexical(content);  
+        let {tokens, error} = data.data
+        this.tokens = tokens;
+        this.error = error;
+      } catch (e) {
+        this.$message.error(e);
+      }
+    },
+    // 语法分析
+    async httpGetAST() {
+      if ( this.tokens.length === 0)
+        return this.$message.warning("请先进行词法分析！");
+      try {
+        const data = await getLexical(this.tokens);
+        this.ast = data.data.data;
+      } catch (e) {
+        this.$message.error(e);
+      }
+    },
+    
     // 更改视图事件
     changeView(obj) {
       if(!this.errorOpen && !this.consoleOpen) {

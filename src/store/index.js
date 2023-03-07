@@ -8,6 +8,10 @@ export default createStore({
             tokens: [], //tokens
             ast: '', //AST树
             diplayStack: [], //操作栈
+            viewStatus: {
+                output: true,
+                error: true
+            }
         }
     },
     mutations: {
@@ -16,16 +20,23 @@ export default createStore({
         },
         UpdateTokens(state, payload) {
             state.tokens = payload
-            console.log(state, payload);
         },
         UpdateAST(state, payload) {
             state.ast = payload
-            console.log(state, payload);
+        },
+        UpdateOutputStatus(state, payload) {
+            state.viewStatus.output = payload
+        },
+        UpdateErrorStatus(state, payload) {
+            state.viewStatus.error = payload
         },
     },
     getters: {
         code(state) {
             return state.code
-        }
+        },
+        viewStatus(state) {
+            return state.viewStatus
+        },
     }
 })

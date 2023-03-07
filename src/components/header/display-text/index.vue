@@ -93,6 +93,11 @@ export default {
       drawer: ref(false),
     };
   },
+  computed: {
+    viewStatus() {
+      return this.$store.getters.viewStatus
+    },
+  },
   methods: {
     handleOpration(obj) {
       if (obj.letter) {
