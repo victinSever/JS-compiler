@@ -60,12 +60,17 @@ const bitwise_operator = [
     '>>>',
 ]
 
+const es6_operator = [
+    '...',
+]
+
 module.exports = [
     ...arithmetic_operators,
     ...assignment_operator,
     ...bitwise_operator,
     ...comparison_operator,
     ...logical_operator,
-    ...type_operator
+    ...type_operator,
+    ...es6_operator
 ]
 

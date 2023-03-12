@@ -19,19 +19,28 @@ router.post("/saveCode", async (req, res) => {
 });
 
 router.get("/getCode", async (req, res) => { 
-    const data = await fileStreamApi.getCode()
+    const { filename } = req.query
+    const data = await fileStreamApi.getCode(filename)
+    res.status(200).send(data);
+});
+
+router.get("/getFolder", async (req, res) => { 
+    const data = await fileStreamApi.getFolder()
     res.status(200).send(data);
 });
 
 router.post("/getLexical", async (req, res) => { 
     const { params } = req.body
-    const data = compilerApi.getLexical(params.content)
+    data = compilerApi.getLexical(params.content)
+    console.log(data ? '词法分析解析完成···' : '');
     res.status(200).send(data);
+
 });
 
 router.post("/getSyntax", async (req, res) => { 
     const { params } = req.body
     const data = compilerApi.getLexical(params.tokens)
+    console.log(data ? '语法分析解析完成···' : '');
     res.status(200).send(data);
 });
 

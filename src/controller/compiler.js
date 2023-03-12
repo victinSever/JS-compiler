@@ -2,7 +2,7 @@
 
 //导入分析器
 const {
-    lexicalAnalysis,
+    Lex,
     syntaxAnalysis 
 } = require('../compiler')
 const { judgeParam } = require('../util/apiJudge')
@@ -35,10 +35,11 @@ function getLexical(content) {
     if(judge.code !== 200) {
         return judge
     }
-    const res = lexicalAnalysis(content)
+    const { tokens, error } = new Lex(content).build()
     return {
         code: 200,
-        data: res || null,
+        tokens: tokens || null,
+        error: error,
         msg: '词法分析结果！'
     }
 }

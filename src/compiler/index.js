@@ -1,10 +1,10 @@
 
 
-const lexicalAnalysis = require('./lexical')
+const Lex = require('./lex')
 const syntaxAnalysis = require('./parse')
 
 module.exports = {
-    lexicalAnalysis,
+    Lex,
     syntaxAnalysis
 }
 

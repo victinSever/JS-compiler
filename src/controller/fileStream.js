@@ -1,11 +1,31 @@
 
 const {
     writeFileData,
-    readFileData
+    readFileData,
+    writeLog,
+    readDir
 } = require('../util/fileIO')
 const { judgeParam } = require('../util/apiJudge')
-const { filename } = require('../util/fileConfig')
+const { formateTime } = require('../util/date')
+const { filename_code, filename_log, folderPath } = require('../util/fileConfig')
 
+async function getFolder() {
+    let folder = await readDir(folderPath)
+    // 封装folder的格式
+    folder = folder.map(item => {
+        return {
+            id: new Date().toString(),
+            label: item,      
+        }
+    })
+    return {
+        code: 200,
+        data: folder || null,
+        msg: '文件目录获取成功！'
+    }
+}
+
+getFolder()
 
 /**
  * 保存文件
@@ -17,7 +37,13 @@ async function saveCode(content) {
     if (judge.code !== 200) {
         return judge
     }
-    const res = await writeFileData(filename, content)
+    const res = await writeFileData(filename_code, content)
+    writeLog(filename_log, {
+        time: formateTime(new Date()),
+        type: 'saveCode',
+        dur: 'lex',        
+        content: content.substring(0, 50) //只截取前50字符记录日志
+    })
     return {
         code: 200,
         data: res || null,
@@ -29,8 +55,20 @@ async function saveCode(content) {
  * 获取文件内容
  * @returns 
  */
-async function getCode() {
+async function getCode(filename) {
+    console.log(filename);
+    if(filename) {
+        filename = folderPath + '\\' + filename
+    } else {
+        filename = filename_code
+    }
     const content = await readFileData(filename)
+    writeLog(filename_log, {      
+        time: formateTime(new Date()),
+        type: 'getCode',
+        dur: 'lex',
+        content: content.substring(0, 50) //只截取前50字符记录日志
+    })
     return {
         code: 200,
         data: content,
@@ -41,4 +79,5 @@ async function getCode() {
 module.exports = {
     saveCode,
     getCode,
+    getFolder
 }
